@@ -32,6 +32,7 @@ router.get('/:email', async function(req, res, next) {
 })
 */
 
+/*
 router.get('/:email', async function(req, res, next) {
   try {
     const email = req.params.email;
@@ -46,6 +47,66 @@ router.get('/:email', async function(req, res, next) {
     next(err);
   }
 });
+*/
+
+router.get('/:id', async function(req, res, next) {
+  try {
+    const id = req.params.id;
+  
+    if (!id) {
+      // Se debe proporcionar un ID. Código de estado: 400 Bad Request /
+      res.sendStatus(400);
+      return;
+    }
+
+    if (!id.match(/^[0-9a-f]{24}$/)) {
+      // El ID no tiene el formato correcto. Código de estado: 400 Bad Request
+      res.sendStatus(400);
+      return;
+    }
+
+    // Validación del token JWT
+    /*
+    const token = req.headers['x-auth-token'];
+    const decodedToken = jwt.verify(token, process.env.JWT_SECRET);
+    const userId = decodedToken.id;
+
+    if (!token || !decodedToken || userId === null) {
+      // Código de estado: 401 Unauthorized
+      res.sendStatus(401);
+      res.send({
+        error: 'El usuario no está autorizado.',
+      });
+      return;
+    }
+    */
+
+    const user = await User.findOne({ _id: id });
+
+    if (!user) {
+      // El usuario no existe.Código de estado: 404 Not Found
+      res.sendStatus(404);
+      return;
+    }
+
+    // Validación de los permisos
+    /*
+    const currentUser = req.user;
+
+    if (!currentUser || !currentUser.hasRole('Administrador')) {
+      // El usuari no tiene los permisos necesarios para realizar la operación. Código de estado: 403 Forbidden
+      res.sendStatus(403);
+      return;
+    }
+    */
+
+    res.send(user);
+  } catch (err) {
+    next(err);
+  }
+});
+
+
 
 /* POST user */
 router.post('/', async function(req, res, next) {
@@ -60,6 +121,38 @@ router.post('/', async function(req, res, next) {
     tarjetaSanitaria,
     rol
   });
+
+
+  // Validación del token JWT
+/*
+  const token = req.headers['x-auth-token'];
+  const decodedToken = jwt.verify(token, process.env.JWT_SECRET);
+  const userId = decodedToken.id;
+
+  if (!token || !decodedToken || userId === null) {
+    // Código de estado: 401 Unauthorized
+    res.sendStatus(401);
+    return;
+  }
+*/
+  // Validación de los permisos
+  /*
+  const currentUser = req.user;
+
+  if (!currentUser || !currentUser.hasRole('Administrador')) {
+    // Código de estado: 403 Forbidden
+    res.sendStatus(403);
+    return;
+  }
+  */
+
+  // Validación del correo electrónico
+  const existingUser = await User.findOne({ email });
+  if (existingUser) {
+    // Código de estado: 409 Conflict
+    res.sendStatus(409);
+    return;
+  }
 
   try {
     await user.save();
@@ -77,6 +170,52 @@ router.post('/', async function(req, res, next) {
   }
 });
 
+router.put('/:id', async function(req, res) {
+  // Obtención del ID del usuario
+  const id = req.params.id;
 
+  // Validación del ID
+  if (!id || !id.match(/^[0-9a-f]{24}$/)) {
+    // Código de estado: 400 Bad Request
+    res.sendStatus(400);
+    return;
+  }
+
+  // Obtención de los datos del usuario
+  const user = await User.findById(id);
+
+  if (!user) {
+    // Código de estado: 404 Not Found
+    res.sendStatus(404);
+    return;
+  }
+
+  // Validación de los datos del usuario
+  const { nombre, email, password, apellidos, compañiaSanitaria, tarjetaSanitaria, rol } = req.body;
+
+  if (!nombre || !email || !password || !apellidos || !compañiaSanitaria || !tarjetaSanitaria || !rol) {
+    // Código de estado: 400 Bad Request
+    res.sendStatus(400);
+    return;
+  }
+
+  // Actualización de los datos del usuario
+  user.nombre = nombre;
+  user.email = email;
+  user.password = password;
+  user.apellidos = apellidos;
+  user.compañiaSanitaria = compañiaSanitaria;
+  user.tarjetaSanitaria = tarjetaSanitaria;
+  user.rol = rol;
+
+  try {
+    await user.save();
+    // Código de estado: 200 OK
+    res.sendStatus(200);
+  } catch(e) {
+    // Código de estado: 500 Internal Server Error
+    res.sendStatus(500);
+  }
+});
 
 module.exports = router;

@@ -33,6 +33,7 @@ const userSchema = new mongoose.Schema({
   
   userSchema.methods.cleanup = function() {
     return {
+        _id: this._id,
         nombre: this.nombre,
         email: this.email,
         password: this.password,
