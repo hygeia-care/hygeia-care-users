@@ -218,4 +218,26 @@ router.put('/:id', async function(req, res) {
   }
 });
 
+router.delete('/:id', async function(req, res) {
+  // Obtención del ID del usuario
+  const id = req.params.id;
+
+  // Validación del ID
+  if (!id || !id.match(/^[0-9a-f]{24}$/)) {
+    // Código de estado: 400 Bad Request
+    res.sendStatus(400);
+    return;
+  }
+
+  // Eliminación del usuario
+  try {
+    await User.deleteOne({ _id: id });
+    // Código de estado: 200 OK
+    res.sendStatus(200);
+  } catch(e) {
+    // Código de estado: 500 Internal Server Error
+    res.sendStatus(500);
+  }
+});
+
 module.exports = router;
