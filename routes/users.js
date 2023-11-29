@@ -6,6 +6,7 @@ var User = require('../models/user');
 /* GET users listing. */
 router.get('/', async function(req, res, next) {
   try {
+    console.log("hola");
     const result = await User.find();
     res.send(result.map((c) => c.cleanup()));
   } catch(e) {
