@@ -1,0 +1,13 @@
+build:
+  hygeia-care-users:
+    context: .
+
+deploy:
+  - helm upgrade --install hygeia-care-users chart
+    --set users.image=${OKTETO_BUILD_HYGEIA-CARE-USERS}
+
+dev:
+  hygeia-care-users: 
+    command: npm start
+    sync:
+      - .:/app
