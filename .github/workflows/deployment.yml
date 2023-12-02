@@ -12,7 +12,7 @@ jobs:
     - uses: actions/checkout@v1
 
     - name: Okteto Login
-      uses: okteto/Login@Latest
+      uses: okteto/login@Latest
       with:
         token: ${{ secrets.OKTETO_TOKEN }}
 
