@@ -1,3 +1,2 @@
 users:
   replicaCount: 1
-  image: ${OKTETO_BUILD_HYGEIA_CARE_USERS}
