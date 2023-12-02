@@ -1,4 +1,2 @@
 users:
   replicaCount: 1
-
-usersMongoUrl: mongodb://mongo/test
