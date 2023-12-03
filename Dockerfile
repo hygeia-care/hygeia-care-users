@@ -12,6 +12,7 @@ COPY models ./models
 COPY public ./public
 COPY routes/ ./routes
 COPY app.js .
+COPY passport.js .
 
 EXPOSE 3000
 
