@@ -22,8 +22,10 @@ app.use('/api/v1/auth/users', usersRouter);
 
 // setup connection to mongo users
 const mongoose = require('mongoose');
+
 const DB_URL = ('mongodb+srv://users_SRV:QPeebigVw4YHOOnrZ3SG@cluster0.miuwv1w.mongodb.net/users')
 // const DB_URL = (process.env.DB_URL || 'mongodb://localhost/test')
+
 console.log("Connecting to database: %s", DB_URL);
 
 mongoose.connect(DB_URL);
