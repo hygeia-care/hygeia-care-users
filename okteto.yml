@@ -5,6 +5,7 @@ build:
 deploy:
   - helm upgrade --install hygeia-care-users chart
     --set users.image=${OKTETO_BUILD_HYGEIA_CARE_USERS_IMAGE}
+    --set usersMongoUrl=$USERS_DB_URL
 
 dev:
   hygeia-care-users: 

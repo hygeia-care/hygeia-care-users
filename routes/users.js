@@ -1,12 +1,15 @@
 var express = require('express');
 var router = express.Router();
 var User = require('../models/user');
+var passport = require('passport');
 
 
 /* GET users listing. */
-router.get('/', async function(req, res, next) {
+router.get('/', 
+  passport.authenticate('bearer', {session:false}),
+  async function(req, res, next) {
   try {
-    console.log("hola");
+    //console.log("hola");
     const result = await User.find();
     res.send(result.map((c) => c.cleanup()));
   } catch(e) {
@@ -16,50 +19,12 @@ router.get('/', async function(req, res, next) {
   }
 });
 
-/* GET user/id */
-/*
-router.get('/:email', async function(req, res, next) {
-  var email = req.params.email;
-  var result = User.find(c => {
-    return c.email === email;
-  });
-    if (result) {
-    res.send({
-      ...result
-    });
-  } else {
-    res.sendStatus(404);
-  }
-})
-*/
-
-/*
-router.get('/:email', async function(req, res, next) {
-  try {
-    const email = req.params.email;
-    const user = await User.findOne({ email });
-
-    if (user) {
-      res.send(user);
-    } else {
-      res.sendStatus(404);
-    }
-  } catch (err) {
-    next(err);
-  }
-});
-*/
-
-router.get('/:id', async function(req, res, next) {
+router.get('/:id', 
+  passport.authenticate('bearer', {session:false}),  
+  async function(req, res, next) {
   try {
     const id = req.params.id;
   
-    if (!id) {
-      // Se debe proporcionar un ID. Código de estado: 400 Bad Request /
-      res.sendStatus(400);
-      return;
-    }
-
     if (!id.match(/^[0-9a-f]{24}$/)) {
       // El ID no tiene el formato correcto. Código de estado: 400 Bad Request
       res.sendStatus(400);
@@ -90,16 +55,7 @@ router.get('/:id', async function(req, res, next) {
       return;
     }
 
-    // Validación de los permisos
-    /*
-    const currentUser = req.user;
-
-    if (!currentUser || !currentUser.hasRole('Administrador')) {
-      // El usuari no tiene los permisos necesarios para realizar la operación. Código de estado: 403 Forbidden
-      res.sendStatus(403);
-      return;
-    }
-    */
+    // Validación de los permisos no es necesaria. Todos los roles tienen acceso.
 
     res.send(user);
   } catch (err) {
@@ -110,7 +66,12 @@ router.get('/:id', async function(req, res, next) {
 
 
 /* POST user */
-router.post('/', async function(req, res, next) {
+// curl -v -H "Authorization: Bearer 0000" http://127.0.0.1:3000/
+// curl -v http://127.0.0.1:3000/?access_token=0000
+
+router.post('/', 
+  passport.authenticate('bearer', {session:false}),
+  async function(req, res, next) {
   const {nombre, email, password, apellidos, compañiaSanitaria, tarjetaSanitaria, rol} = req.body;
 
   const user = new User({
@@ -136,16 +97,7 @@ router.post('/', async function(req, res, next) {
     return;
   }
 */
-  // Validación de los permisos
-  /*
-  const currentUser = req.user;
-
-  if (!currentUser || !currentUser.hasRole('Administrador')) {
-    // Código de estado: 403 Forbidden
-    res.sendStatus(403);
-    return;
-  }
-  */
+  // Validación de los permisos no es necesario. Todos los roles pueden ejecutar esta acción.
 
   // Validación del correo electrónico
   const existingUser = await User.findOne({ email });
@@ -171,7 +123,9 @@ router.post('/', async function(req, res, next) {
   }
 });
 
-router.put('/:id', async function(req, res) {
+router.put('/:id', 
+  passport.authenticate('bearer', {session:false}),
+  async function(req, res) {
   // Obtención del ID del usuario
   const id = req.params.id;
 
@@ -219,7 +173,9 @@ router.put('/:id', async function(req, res) {
   }
 });
 
-router.delete('/:id', async function(req, res) {
+router.delete('/:id', 
+  passport.authenticate('bearer', {session:false}),    
+  async function(req, res) {
   // Obtención del ID del usuario
   const id = req.params.id;
 
