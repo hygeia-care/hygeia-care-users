@@ -45,6 +45,14 @@ const userSchema = new mongoose.Schema({
 }
 
   
-  const User = mongoose.model('User', userSchema);
+  // const User = mongoose.model('User', userSchema);
+  //  const mongoose = require('mongoose'); 
+    const dbuser = mongoose.createConnection('mongodb+srv://users_SRV:QPeebigVw4YHOOnrZ3SG@cluster0.miuwv1w.mongodb.net/users');
+    console.log("Connecting to database: %s", 'mongodb+srv://users_SRV:QPeebigVw4YHOOnrZ3SG@cluster0.miuwv1w.mongodb.net/users');
+
+  // Definición del modelo utilizando la conexión específica para apikeys
+  const User = dbuser.model('User', userSchema);
+
+  dbuser.on('error', console.error.bind(console, 'dbuser connection error'));
   
   module.exports = User;

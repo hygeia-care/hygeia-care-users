@@ -3,8 +3,6 @@ const Bearer = require('passport-http-bearer').Strategy;
 const ApiKey = require('./models/apikey');
 
 
-
-
 passport.use(new Bearer (
     async (token, cb) => {
         try {
