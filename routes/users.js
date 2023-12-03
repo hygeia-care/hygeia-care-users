@@ -1,6 +1,7 @@
 var express = require('express');
 var router = express.Router();
 var User = require('../models/user');
+var passport = require('passport');
 
 
 /* GET users listing. */
@@ -110,7 +111,12 @@ router.get('/:id', async function(req, res, next) {
 
 
 /* POST user */
-router.post('/', async function(req, res, next) {
+// curl -v -H "Authorization: Bearer 0000" http://127.0.0.1:3000/
+// curl -v http://127.0.0.1:3000/?access_token=0000
+
+router.post('/', 
+  passport.authenticate('bearer', {session:false}),
+  async function(req, res, next) {
   const {nombre, email, password, apellidos, compañiaSanitaria, tarjetaSanitaria, rol} = req.body;
 
   const user = new User({
@@ -171,7 +177,9 @@ router.post('/', async function(req, res, next) {
   }
 });
 
-router.put('/:id', async function(req, res) {
+router.put('/:id', 
+  passport.authenticate('bearer', {session:false}),
+  async function(req, res) {
   // Obtención del ID del usuario
   const id = req.params.id;
 
