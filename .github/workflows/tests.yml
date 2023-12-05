@@ -5,9 +5,9 @@ name: tests CI
 
 on:
   push:
-    branches:
-      - develop
+    branches: ["develop"]
   pull_request:
+      branches: ["develop"]
   workflow_call:
 
 jobs:
