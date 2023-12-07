@@ -72,14 +72,14 @@ router.get('/:id',
 router.post('/', 
   passport.authenticate('bearer', {session:false}),
   async function(req, res, next) {
-  const {nombre, email, password, apellidos, compañiaSanitaria, tarjetaSanitaria, rol} = req.body;
+  const {nombre, email, password, apellidos, companiaSanitaria, tarjetaSanitaria, rol} = req.body;
 
   const user = new User({
     nombre,
     email,
     password,
     apellidos,
-    compañiaSanitaria,
+    companiaSanitaria,
     tarjetaSanitaria,
     rol
   });
@@ -126,50 +126,45 @@ router.post('/',
 router.put('/:id', 
   passport.authenticate('bearer', {session:false}),
   async function(req, res) {
-  // Obtención del ID del usuario
-  const id = req.params.id;
-
-  // Validación del ID
-  if (!id || !id.match(/^[0-9a-f]{24}$/)) {
-    // Código de estado: 400 Bad Request
-    res.sendStatus(400);
-    return;
-  }
-
-  // Obtención de los datos del usuario
-  const user = await User.findById(id);
-
-  if (!user) {
-    // Código de estado: 404 Not Found
-    res.sendStatus(404);
-    return;
-  }
-
-  // Validación de los datos del usuario
-  const { nombre, email, password, apellidos, compañiaSanitaria, tarjetaSanitaria, rol } = req.body;
-
-  if (!nombre || !email || !password || !apellidos || !compañiaSanitaria || !tarjetaSanitaria || !rol) {
-    // Código de estado: 400 Bad Request
-    res.sendStatus(400);
-    return;
-  }
-
-  // Actualización de los datos del usuario
-  user.nombre = nombre;
-  user.email = email;
-  user.password = password;
-  user.apellidos = apellidos;
-  user.compañiaSanitaria = compañiaSanitaria;
-  user.tarjetaSanitaria = tarjetaSanitaria;
-  user.rol = rol;
-
   try {
+    // Obtención del ID del usuario
+    const id = req.params.id;
+
+    // Validación del ID
+    if (!id || !id.match(/^[0-9a-f]{24}$/)) {
+      // Código de estado: 400 Bad Request
+      console.log("ID no válido");
+      return res.sendStatus(400);
+    }
+  
+    // Obtención de los datos del usuario
+    const user = await User.findById(id);
+    if (!user) {
+      console.log("Usuario no existe");
+      return res.sendStatus(404);
+    }
+    // Validación de los datos del usuario
+    const { nombre, email, password, apellidos, companiaSanitaria, tarjetaSanitaria, rol } = req.body;
+    if (!nombre || !email || !password || !apellidos || !companiaSanitaria || !tarjetaSanitaria || !rol) {
+      console.log("Faltan datos obligatorios");
+      return res.sendStatus(400);
+    } 
+    
+    // Actualización de los datos del usuario
+        user.nombre = nombre;
+        user.email = email;
+        user.password = password;
+        user.apellidos = apellidos;
+        user.companiaSanitaria = companiaSanitaria;
+        user.tarjetaSanitaria = tarjetaSanitaria;
+        user.rol = rol;
+
     await user.save();
-    // Código de estado: 200 OK
-    res.sendStatus(200);
+    return res.sendStatus(200);
+    
   } catch(e) {
     // Código de estado: 500 Internal Server Error
-    res.sendStatus(500);
+    return res.sendStatus(500);
   }
 });
 
