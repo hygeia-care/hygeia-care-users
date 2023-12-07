@@ -10,9 +10,12 @@ RUN npm install
 COPY bin/ ./bin
 COPY models ./models
 COPY public ./public
-COPY routes/ ./routes
+COPY routes ./routes
 COPY app.js .
 COPY passport.js .
+COPY dbapikey.js .
+COPY dbuser.js .
+
 
 EXPOSE 3000
 
