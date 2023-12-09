@@ -2,33 +2,47 @@ var mongoose = require("mongoose");
 const dbusers = require("../dbuser");
 
 const userSchema = new mongoose.Schema({
+   
     nombre: {
         type: String,
-        required: true
+        required: [true, 'El campo nombre es obligatorio'],
+        trim: true, // Elimina espacios en blanco al principio y al final
     },
     email: {
         type: String,
-        required: true
+        required: [true, 'El campo email es obligatorio'],
+        unique: true, // Asegura que el email sea único en la colección
+        trim: true,
+        lowercase: true, // Convierte el email a minúsculas
+        match: [/\S+@\S+\.\S+/, 'El formato del email no es válido'], // Valida el formato del email   
     },    
     password: {
         type: String,
-        required: true
+        required: [true, 'El campo password es obligatorio'],
+        validate: {
+          validator: function (value) {
+            // La contraseña debe contener al menos una letra y al menos un número
+            return /^(?=.*[a-zA-Z])(?=.*\d).*$/.test(value);
+          },
+          message: 'La contraseña debe contener al menos una letra y al menos un número',
+        },
+        minlength: [6, 'La contraseña debe tener al menos 6 caracteres'],    
     },
     apellidos: {
         type: String,
-        required: true
+        required: [true, 'El campo apellidos es obligatorio'],
+        trim: true, // Elimina espacios en blanco al principio y al final
     },
     companiaSanitaria: {
         type: String,
-        required: true
     },
     tarjetaSanitaria: {
         type: String,
-        required: true
     },
     rol: {
         type: String,
-        required: true
+        required: [true, 'El campo rol es obligatorio'],
+        enum: ['Admin', 'Usuario'],
     }
   });
   

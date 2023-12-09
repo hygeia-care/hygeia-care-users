@@ -2,7 +2,7 @@ const app = require('../app');
 const passport = require ('passport');
 const request = require('supertest');
 const User = require('../models/user');
-//const passportStub = require('passport-stub');
+const verifyToken = require('../verifyJWTToken');
 
 
 
@@ -29,10 +29,13 @@ describe("Users API", () => {
             dbFind.mockImplementation(async () => Promise.resolve(users));
             // Simula la generación de un token de acceso (puede variar según tu implementación)
             const token = "04f9237d-646e-4e0d-90d2-504b1f7dcbc0";
+            const validJWT = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY1NzBjMDYzNDY3ZmEwMWZkYWZmMDkxZSIsInJvbCI6IlVzdWFyaW8iLCJpYXQiOjE3MDIxNTE3NzN9.xp9pJ6HLc2TV24LsVJQhVqhy_Mjwe6yeukryqlOiLW4";
+
             // Realiza la solicitud con el token de autorización
             const response = await request(app)
                 .get("/api/v1/auth/users")
-                .set("Authorization", `Bearer ${token}`);
+                .set("Authorization", `Bearer ${token}`)
+                .set("x-auth-token", validJWT);
     
             // Realiza las aserciones
             expect(response.statusCode).toBe(200);
