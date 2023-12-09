@@ -8,6 +8,7 @@ const passport = require('./passport');
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 
+
 var app = express();
 
 app.use(logger('dev'));
@@ -16,6 +17,8 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(passport.initialize());
+
+require('dotenv').config();
 
 app.use('/', indexRouter);
 app.use('/api/v1/auth/users', usersRouter);

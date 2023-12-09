@@ -15,6 +15,7 @@ COPY app.js .
 COPY passport.js .
 COPY dbapikey.js .
 COPY dbuser.js .
+COPY verifyJWTToken.js .
 
 
 EXPOSE 3000
