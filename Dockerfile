@@ -16,6 +16,7 @@ COPY passport.js .
 COPY dbapikey.js .
 COPY dbuser.js .
 COPY verifyJWTToken.js .
+COPY .env .
 
 
 EXPOSE 3000
