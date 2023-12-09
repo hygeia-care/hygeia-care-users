@@ -7,7 +7,6 @@ passport.use(new Bearer (
     async (token, cb) => {
         try {
             const user = await ApiKey.findOne({ apikey: token });
-
             if (!user) {
                 return cb(null, false, { message: 'Unknown apikey ' + token });
             }
