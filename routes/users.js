@@ -177,7 +177,7 @@ router.put('/:id', [passport.authenticate('bearer', { session: false }), verifyT
         const validationErrors = Object.values(mongooseError.errors).map(error => error.message);
         return res.status(400).json({ error: 'Error de validación', validationErrors });
       }
-      throw mongooseError; // Reenviar errores no relacionados con la validación
+      throw mongooseError; // Reenviar errores no relacionados con la valid ación
     }
     
   } catch(e) {
