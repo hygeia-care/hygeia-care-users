@@ -71,10 +71,12 @@ router.post('/', [passport.authenticate('bearer', { session: false }), verifyTok
 
   const {nombre, email, password, apellidos, companiaSanitaria, tarjetaSanitaria, rol} = req.body;
 
+  const hashedPassword = await bcrypt.hash(password, 10);
+
   const user = new User({
     nombre,
     email,
-    password,
+    password: hashedPassword,
     apellidos,
     companiaSanitaria,
     tarjetaSanitaria,
@@ -215,7 +217,6 @@ router.post('/login', async function (req, res, next) {
     if (!user) {
       return res.status(401).json({ message: 'Usuario o contraseña incorrectos' });
     }
-
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) {
       return res.status(401).json({ message: 'Usuario o contraseña incorrectos' });
