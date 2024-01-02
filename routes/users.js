@@ -83,7 +83,11 @@ router.post('/', [passport.authenticate('bearer', { session: false }), verifyTok
     rol
   });
 
-
+  if (password) {
+    const hashedPassword = await bcrypt.hash(password, 10);
+    user.password = hashedPassword;
+  }
+  
   // Validación del token JWT
 /*
   const token = req.headers['x-auth-token'];
