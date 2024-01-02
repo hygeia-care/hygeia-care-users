@@ -2,6 +2,8 @@ var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
+const cors = require('cors'); // importamos CORS
+
 
 const cors = require('cors');
 
@@ -20,6 +22,8 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(passport.initialize());
 app.use(cors())
+
+app.use(cors()); // Aplicamos CORS a todas las rutas
 
 require('dotenv').config();
 
