@@ -11,6 +11,7 @@ COPY bin/ ./bin
 COPY models ./models
 COPY public ./public
 COPY routes ./routes
+COPY services ./services
 COPY app.js .
 COPY passport.js .
 COPY dbapikey.js .
