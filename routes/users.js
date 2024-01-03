@@ -88,12 +88,10 @@ router.post('/', [passport.authenticate('bearer', { session: false }), verifyTok
 
   const {nombre, email, password, apellidos, companiaSanitaria, tarjetaSanitaria, rol} = req.body;
 
-  const hashedPassword = await bcrypt.hash(password, 10);
-
   const user = new User({
     nombre,
     email,
-    password: hashedPassword,
+    password,
     apellidos,
     companiaSanitaria,
     tarjetaSanitaria,
