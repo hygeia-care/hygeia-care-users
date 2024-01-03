@@ -1,6 +1,7 @@
 var express = require('express');
 var router = express.Router();
 var User = require('../models/user');
+var bills = require('../services/bills');
 var passport = require('passport');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
@@ -15,7 +16,14 @@ require('dotenv').config();
 router.get('/', [passport.authenticate('bearer', { session: false }), verifyToken], async function(req, res, next) {
 
   try {
-    //console.log("hola");
+    try{
+      // Validación del token JWT
+      const token = req.headers['x-auth-token'];
+      const decodedToken = jwt.verify(token, process.env.JWT_SECRET);
+    } catch{
+        // Código de estado: 401 Unauthorized
+        return res.status(401).json({ error: 'Error JWT no valido' });
+    }
     const result = await User.find();
     res.send(result.map((c) => c.cleanup()));
   } catch(e) {
@@ -29,7 +37,6 @@ router.get('/', [passport.authenticate('bearer', { session: false }), verifyToke
 router.get('/:id', [passport.authenticate('bearer', { session: false }), verifyToken], async function(req, res, next) {
 
   try {
-    /*
       try{
         // Validación del token JWT
         const token = req.headers['x-auth-token'];
@@ -37,8 +44,7 @@ router.get('/:id', [passport.authenticate('bearer', { session: false }), verifyT
       } catch{
           // Código de estado: 401 Unauthorized
           return res.status(401).json({ error: 'Error JWT no valido' });
-      }    
-    */
+      }
     const id = req.params.id;
     if (!id.match(/^[0-9a-f]{24}$/)) {
       // El ID no tiene el formato correcto. Código de estado: 400 Bad Request
@@ -54,7 +60,18 @@ router.get('/:id', [passport.authenticate('bearer', { session: false }), verifyT
       return;
     }
 
-    res.send(user);
+    var billsData = await bills.getBills(); 
+    console.log('billsData:', billsData);
+    user.bills = billsData;
+    console.log('user:', user);
+    //res.send(user);
+    // Envía la respuesta con los datos del usuario y las facturas
+    res.send({
+      ...user.toObject(),  // Convertimos el objeto mongoose a un objeto simple
+      "bills": billsData
+    });
+
+
   } catch (err) {
     next(err);
   }
@@ -81,7 +98,11 @@ router.post('/', [passport.authenticate('bearer', { session: false }), verifyTok
     rol
   });
 
-
+  if (password) {
+    const hashedPassword = await bcrypt.hash(password, 10);
+    user.password = hashedPassword;
+  }
+  
   // Validación del token JWT
 /*
   const token = req.headers['x-auth-token'];
@@ -175,7 +196,7 @@ router.put('/:id', [passport.authenticate('bearer', { session: false }), verifyT
         const validationErrors = Object.values(mongooseError.errors).map(error => error.message);
         return res.status(400).json({ error: 'Error de validación', validationErrors });
       }
-      throw mongooseError; // Reenviar errores no relacionados con la validación
+      throw mongooseError; // Reenviar errores no relacionados con la valid ación
     }
     
   } catch(e) {
@@ -215,7 +236,6 @@ router.post('/login', async function (req, res, next) {
     if (!user) {
       return res.status(401).json({ message: 'Usuario o contraseña incorrectos' });
     }
-
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) {
       return res.status(401).json({ message: 'Usuario o contraseña incorrectos' });
