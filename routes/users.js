@@ -9,21 +9,9 @@ const verifyToken = require('../verifyJWTToken');
 
 require('dotenv').config();
 
-
-
-/* GET users listing. */
-//router.get('/', passport.authenticate('bearer', {session:false}), async function(req, res, next) {
 router.get('/', [passport.authenticate('bearer', { session: false }), verifyToken], async function(req, res, next) {
 
   try {
-    try{
-      // Validación del token JWT
-      const token = req.headers['x-auth-token'];
-      const decodedToken = jwt.verify(token, process.env.JWT_SECRET);
-    } catch{
-        // Código de estado: 401 Unauthorized
-        return res.status(401).json({ error: 'Error JWT no valido' });
-    }
     const result = await User.find();
     res.send(result.map((c) => c.cleanup()));
   } catch(e) {
@@ -37,14 +25,6 @@ router.get('/', [passport.authenticate('bearer', { session: false }), verifyToke
 router.get('/:id', [passport.authenticate('bearer', { session: false }), verifyToken], async function(req, res, next) {
 
   try {
-      try{
-        // Validación del token JWT
-        const token = req.headers['x-auth-token'];
-        const decodedToken = jwt.verify(token, process.env.JWT_SECRET);
-      } catch{
-          // Código de estado: 401 Unauthorized
-          return res.status(401).json({ error: 'Error JWT no valido' });
-      }
     const id = req.params.id;
     if (!id.match(/^[0-9a-f]{24}$/)) {
       // El ID no tiene el formato correcto. Código de estado: 400 Bad Request
@@ -84,7 +64,7 @@ router.get('/:id', [passport.authenticate('bearer', { session: false }), verifyT
 // curl -v http://127.0.0.1:3000/?access_token=0000
 
 //router.post('/', passport.authenticate('bearer', {session:false}),async function(req, res, next) {
-router.post('/', [passport.authenticate('bearer', { session: false }), verifyToken], async function(req, res, next) {
+router.post('/', [passport.authenticate('bearer', { session: false })], async function(req, res, next) {
 
   const {nombre, email, password, apellidos, companiaSanitaria, tarjetaSanitaria, rol} = req.body;
 
@@ -102,20 +82,7 @@ router.post('/', [passport.authenticate('bearer', { session: false }), verifyTok
     const hashedPassword = await bcrypt.hash(password, 10);
     user.password = hashedPassword;
   }
-  
-  // Validación del token JWT
-/*
-  const token = req.headers['x-auth-token'];
-  const decodedToken = jwt.verify(token, process.env.JWT_SECRET);
-  const userId = decodedToken.id;
-
-  if (!token || !decodedToken || userId === null) {
-    // Código de estado: 401 Unauthorized
-    res.sendStatus(401);
-    return;
-  }
-*/
-  // Validación de los permisos no es necesario. Todos los roles pueden ejecutar esta acción.
+    // Validación de los permisos no es necesario. Todos los roles pueden ejecutar esta acción.
 
   // Validación del correo electrónico
   const existingUser = await User.findOne({ email });
