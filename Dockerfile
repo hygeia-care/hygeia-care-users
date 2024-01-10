@@ -20,6 +20,6 @@ COPY verifyJWTToken.js .
 COPY .env .
 
 
-EXPOSE 3000
+EXPOSE 3333
 
 CMD npm start 
