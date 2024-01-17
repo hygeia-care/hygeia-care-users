@@ -15,6 +15,7 @@ COPY services ./services
 COPY app.js .
 COPY passport.js .
 COPY dbapikey.js .
+COPY dbusertest.js .
 COPY dbuser.js .
 COPY verifyJWTToken.js .
 COPY .env .
