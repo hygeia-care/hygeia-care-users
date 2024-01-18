@@ -2,7 +2,7 @@ const request = require("supertest");
 const dbusertest = require("../../dbusertest");
 const jwt = require("jsonwebtoken");
 const app = require("../../app");
-const User = require("../../models/user");
+const User = require("../../models/user")
 
 jest.setTimeout(30000);
 
@@ -119,10 +119,10 @@ describe("Pruebas de integración para usuarios", () => {
 
     await newUser.save();
     resultAdd = await User.find();
+    //expect(resultAdd).toBeArrayOfSize(1);
 
     resultRead = await User.findById(newUser._id);
     expect(resultRead.nombre).toEqual("Integrador");
-    console.log(resultRead._id);
 
     await User.deleteOne(newUser._id);
     resultDelete = await User.findById(newUser._id);
